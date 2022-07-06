@@ -231,5 +231,5 @@ def testAsan(outcoFilePath, salesFilePath):
 
 configFarmInfo()
 #runAsan()
-runWoosung()
+#runWoosung()
 #infoLogToJson.makeJsonResult()

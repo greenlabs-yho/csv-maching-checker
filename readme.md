@@ -2,7 +2,7 @@
 - 메인 실행 로직
 
 - 필요한 기본 데이터
-    - data/farm_source_info.csv : 메인 정보 파일
+    - data/farm_source_info.csv : 메인 정보 파일(pk,비교용데이터 두개 컬럼 사용)
     - 대조군 폴더 구조  
     -- data/asan/outco/농약사/날짜/파일명  
     -- data/asan/outsales/농약사/날짜/파일명  
