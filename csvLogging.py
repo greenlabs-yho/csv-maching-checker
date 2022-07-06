@@ -36,7 +36,7 @@ def error(logData):
 def writeMatchingInfo(logData):
     if type(logData) is dict:
         logger.info(json.dumps(logData));
-        with open("./data/matching_phone.csv", 'a+') as f:
+        with open("./data/matching_info.csv", 'a+') as f:
             f.write(logData["extra_info"]+"\n");
     else:
         logger.info(logData)
