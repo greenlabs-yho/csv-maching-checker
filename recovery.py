@@ -1,3 +1,5 @@
+import os;
+
 
 def recoveryCSVPattern():
     TARGET_OUTCO_PATH = "./data/asan/outco/"
@@ -14,6 +16,19 @@ def recoveryCSVPattern():
                         newLine = line.replace('?,', '?",')
                         with open(outcoPath+"/"+outcoFile+"_rcv", "w+", newline='\n', encoding='UTF8') as writeFile:
                             writeFile.write(newLine)
+
+
+
+def recoveryCSVPatternToFileList(fileList):
+    for file in fileList:
+        with open(file, newline='\n', encoding='UTF8') as csvfile:
+            data = csvfile.read()
+            if data.find("?,") >= 0:
+                newData = data.replace('?,', '?",')
+                with open(file + "_rcv", "w+", newline='\n', encoding='UTF8') as writeFile:
+                    writeFile.write(newData)
+
+
 
 
 def recoveryNullBytes():
@@ -54,5 +69,68 @@ def deleteFiles(basePath, targetDate):
                 os.remove(datePath + "/" + file)
 
 
+
+def makeCLIRecoveryFiles():
+    TARGET_OUTCO_PATH = "./data/asan/outco/"
+    TARGET_SALES_PATH = "./data/asan/outsales/"
+    TARGET_DATE = "20220704"
+    dbList = os.listdir(TARGET_SALES_PATH)
+
+    #with open("./log/renameS3Object.txt", "w+") as writeFile:
+    with open("./log/uploadS3Object.txt", "w+") as writeFile:
+        for db in dbList:
+            salesPath = TARGET_SALES_PATH + db + "/" + TARGET_DATE
+            outcoPath = TARGET_OUTCO_PATH + db + "/" + TARGET_DATE
+            salesFileList = os.listdir(salesPath)
+            outcoFileList = os.listdir(outcoPath)
+            for outcoFile in outcoFileList:
+                if os.path.isfile(outcoPath + "/" +outcoFile + "_rcv"):
+                    continue
+
+                if outcoFile.endswith("_rcv"):
+                    #tmp = (outcoPath + "/" +outcoFile).replace("_rcv", "").replace('./data', 's3://ws-pipeline-bucket-b2b-temp')
+                    #writeFile.write("aws s3 mv {0} {1}\r\n".format(tmp, tmp+".20220707_105100"))
+                    #writeFile.write("aws s3 cp {0} {1}\r\n".format(outcoPath + "/" +outcoFile, tmp))
+                    csvName = (outcoPath + "/" +outcoFile).replace("_rcv", "")
+                    timeName = (outcoPath + "/" +outcoFile).replace("_rcv", "") + ".20220707_170200"
+                    os.rename(csvName, timeName)
+                    os.rename(outcoPath + "/" + outcoFile, csvName)
+                    print(csvName)
+
+            for salesFile in salesFileList:
+                if os.path.isfile(salesPath + "/" +salesFile + "_rcv"):
+                    continue
+
+                if salesFile.endswith("_rcv"):
+                    #tmp = (salesPath + "/" +salesFile).replace("_rcv", "").replace('./data', 's3://ws-pipeline-bucket-b2b-temp')
+                    #writeFile.write("aws s3 mv {0} {1}\r\n".format(tmp, tmp+".20220707_105100"))
+                    #writeFile.write("aws s3 cp {0} {1}\r\n".format(outcoPath + "/" +outcoFile, tmp))
+                    csvName = (salesPath + "/" +salesFile).replace("_rcv", "")
+                    timeName = (salesPath + "/" +salesFile).replace("_rcv", "") + ".20220707_170200"
+                    os.rename(csvName, timeName)
+                    os.rename(salesPath + "/" + salesFile, csvName)
+                    print(csvName, timeName, salesPath + "/" + salesFile)
+
+
+def checkCSVPattern():
+    TARGET_OUTCO_PATH = "./data/asan/outsales/"
+    TARGET_DATE = "20220704"
+    dbList = os.listdir(TARGET_OUTCO_PATH)
+    for db in dbList:
+        path = TARGET_OUTCO_PATH + db + "/" + TARGET_DATE
+        fileList = os.listdir(path)
+        for file in fileList:
+            if os.path.isfile(path + "/" + file + "_rcv"):
+                continue
+
+            with open(path+"/"+file, newline='\n', encoding='UTF8') as csvfile:
+                line = csvfile.read()
+                if line.find("?,") >= 0:
+                    print(path+"/"+file)
+
+
+
+
+makeCLIRecoveryFiles()
 
 
